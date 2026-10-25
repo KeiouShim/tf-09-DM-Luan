@@ -113,6 +113,10 @@ def tentar(acao):
     except Exception as erro:
         print("Erro:", erro)
 
+
+class Atalho(Item):
+    """Item que aponta para outro item (o destino), como um atalho do Windows."""
+
     __slots__ = ("__destino",)
 
     def __init__(self, nome, destino, pai=None):
@@ -144,3 +148,47 @@ def tentar(acao):
         """Imprime 'nome -> caminho do destino' com o recuo indicado."""
         print("  " * recuo + self.nome + " -> " + self.__destino.caminho)
 
+
+# ---------- Testes ----------
+NOME_USUARIO = "seu_usuario"  # troque pelo seu nome de usuario do Windows
+
+disco = Pasta("C:")
+usuarios = Pasta("Users", disco)
+disco.adicionar(usuarios)
+usuario = Pasta(NOME_USUARIO, usuarios)
+usuarios.adicionar(usuario)
+desktop = Pasta("Desktop", usuario)
+usuario.adicionar(desktop)
+documentos = Pasta("Documentos", usuario)
+usuario.adicionar(documentos)
+
+relatorio = Arquivo("relatorio.txt", 120, desktop)
+desktop.adicionar(relatorio)
+foto = Arquivo("foto.png", 4096, documentos)
+documentos.adicionar(foto)
+
+atalho_relatorio = Atalho("atalho_relatorio", relatorio, desktop)
+desktop.adicionar(atalho_relatorio)
+atalho_documentos = Atalho("atalho_documentos", documentos, desktop)
+desktop.adicionar(atalho_documentos)
+
+print("=== Arvore completa ===")
+disco.mostrar()
+
+print("\n=== Espaco total ===")
+arquivo_solto = Arquivo("solto.txt", 50)
+pasta_teste = Pasta("Teste")
+pasta_teste.adicionar(Atalho("atalho_foto", foto, pasta_teste))
+lixeira = Lixeira()
+print("Total:", espaco_total([arquivo_solto, pasta_teste, lixeira]))
+
+print("\n=== Tentativas que devem FALHAR ===")
+
+
+def trocar_destino_direto():
+    atalho_relatorio.destino = foto
+
+
+tentar(trocar_destino_direto)
+tentar(lambda: atalho_relatorio.redirecionar(atalho_relatorio))
+tentar(lambda: Atalho("loop", desktop, desktop))
