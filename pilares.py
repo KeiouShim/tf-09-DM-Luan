@@ -150,7 +150,7 @@ class Atalho(Item):
 
 
 # ---------- Testes ----------
-NOME_USUARIO = "seu_usuario"  # troque pelo seu nome de usuario do Windows
+NOME_USUARIO = "rozsp"  #  usuario do Windows
 
 disco = Pasta("C:")
 usuarios = Pasta("Users", disco)
